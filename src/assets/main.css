@@ -1,0 +1,198 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("@/assets/fonts/Poppins-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Hanuman";
+  src: url("@/assets/fonts/Hanuman-Regular.ttf") format("truetype");
+}
+
+body {
+  font-family: "Poppins", "Hanuman", sans-serif !important;
+}
+
+.text-prime {
+  color: #f97316 !important;
+}
+
+.bg-prime {
+  background: #f97316 !important;
+}
+
+.bg-prime:hover {
+  background: #ea6607 !important;
+}
+
+/* Error toast */
+.Vue-Toastification__toast--error {
+  background: #e02424 !important;
+  color: white !important;
+}
+
+/* Success toast */
+.Vue-Toastification__toast--success {
+  background: #16a34a !important;
+  color: #fff !important;
+}
+
+/* Info toast */
+.Vue-Toastification__toast--info {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+.bg-main {
+  background-color: #f3f4f6 !important;
+}
+
+.bg-second {
+  background-color: #f9f9ff !important;
+}
+
+.fs-6 {
+  font-size: 14px !important;
+}
+
+.fs-7 {
+  font-size: 12px !important;
+}
+
+.fs-8 {
+  font-size: 10px !important;
+}
+
+.ls {
+  letter-spacing: 0.4px !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.shadow-box {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #ebebeb;
+}
+
+.w-fit {
+  width: fit-content !important;
+}
+
+.h-fit {
+  height: fit-content !important;
+}
+
+body > .n-image-preview-container .n-image-preview-toolbar {
+  padding: 30px !important;
+  padding-left: 18px !important;
+  gap: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  border-radius: 100px !important;
+  cursor: pointer;
+}
+
+body > .n-image-preview-container .n-image-preview-toolbar .n-base-icon {
+  font-size: 30px !important;
+}
+
+.n-select-menu .n-base-select-option .n-base-select-option__check {
+  margin-right: 16px !important;
+}
+
+.n-date-panel
+  .n-date-panel-month-calendar
+  .n-date-panel-month-calendar__picker-col
+  .n-date-panel-month-calendar__padding {
+  height: calc(var(--n-scroll-item-height) * 0.15);
+}
+
+button.n-button.n-button--primary-type:not(.n-button--disabled):hover {
+  --n-color-hover: #ea6607 !important;
+  --n-border-hover: 1px solid #ea6607 !important;
+  --n-text-color-hover: #ffffff !important;
+}
+
+button.n-button.n-button--default-type:not(.n-button--disabled):hover {
+  --n-color-hover: #000000 !important;
+  --n-border-hover: 1px solid #000000 !important;
+  --n-text-color-hover: #ffffff !important;
+  background-color: #000000 !important;
+}
+
+button.n-button.n-button--default-type:hover .n-button__border {
+  border: 1px solid #000000 !important;
+}
+
+button.n-button.n-button--default-type:hover .n-button__content {
+  color: #ffffff !important;
+}
+
+/* 1. Force the container to respect the gap */
+.n-pagination {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.n-pagination .n-pagination-item {
+  color: #555 !important;
+  background-color: #fff !important;
+  border: 1px solid #e9ecef !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  box-sizing: border-box !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+}
+
+/* 3. Active state - Fixed sizing */
+.n-pagination
+  .n-pagination-item:not(
+    .n-pagination-item--disabled
+  ).n-pagination-item--active {
+  background-color: #f97316 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* 4. Hover states */
+.n-pagination
+  .n-pagination-item:not(.n-pagination-item--disabled):not(
+    .n-pagination-item--active
+  ):not(.n-pagination-item--button):hover {
+  border-color: #f97316 !important;
+  color: #f97316 !important;
+}
+
+.n-pagination
+  .n-pagination-item--button:not(.n-pagination-item--disabled):hover {
+  border-color: #f97316 !important;
+}
+
+/* 5. Prev/Next Buttons layout */
+.n-pagination .n-pagination-item.n-pagination-item--button {
+  box-sizing: border-box !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 50% !important;
+}
+
+/* 6. Disabled state */
+.n-pagination .n-pagination-item.n-pagination-item--disabled {
+  color: #ced4da !important;
+  background-color: #fff !important;
+  border-color: #f1f3f5 !important;
+  pointer-events: none !important;
+}
