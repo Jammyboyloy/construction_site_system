@@ -1,7 +1,8 @@
 import { useAuthStore } from "@/stores/auth";
 import axios from "axios";
 const api = axios.create({
-  baseURL: "https://construction-site-api-3uii.onrender.com",
+  // baseURL: "https://construction-site-api-3uii.onrender.com",
+  baseURL: "http://localhost:3000",
 });
 
 api.interceptors.request.use((config) => {

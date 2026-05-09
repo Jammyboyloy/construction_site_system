@@ -137,6 +137,11 @@ watch(range, (val) => {
 });
 
 const handleSubmit = () => {
+  const formData = new FormData()
+  if (file.value?.file) {
+    formData.append('image', file.value.file)
+  }
+
   const data = {
     projectName: projectName.value,
     location: location.value,
@@ -144,10 +149,11 @@ const handleSubmit = () => {
     budget: budget.value,
     startDate: startDate.value,
     endDate: endDate.value,
-    image: file.value?.file || null,
-  };
-  console.log("Submitted Data:", data);
-};
+    image: formData.get('image')
+  }
+
+  console.log('Submitted Data:', data)
+}
 
 const selectThemeOverrides = {
   peers: {
@@ -249,75 +255,5 @@ const options = [
 </script>
 
 <style scoped>
-.upload-trigger-box {
-  width: 120px;
-  height: 120px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border-color 0.3s;
-}
 
-.upload-trigger-box:hover {
-  border-color: #f97316;
-  color: #f97316;
-}
-
-.preview-box {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.img-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.preview-box:hover .overlay {
-  opacity: 1;
-}
-
-.icon-group {
-  display: flex;
-  gap: 5px;
-}
-
-.action-icon {
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-
-  transition: all 0.3s ease;
-}
-
-.action-icon:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-}
 </style>

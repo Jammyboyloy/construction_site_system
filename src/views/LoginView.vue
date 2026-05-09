@@ -95,6 +95,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { isEmail, require, validates } from "@/utils/validate";
 import { notify } from "@/utils/toast";
+import { connectSocket } from "@/socket";
 
 // import { useToast } from "vue-toastification";
 // let toast = useToast();
@@ -130,10 +131,13 @@ async function handleLogin() {
   isLoading.value = true;
   try {
     await auth.login(email.value, password.value);
-    router.push({ name: "home" });
+
+    if (auth.socketUserId) {
+      connectSocket(auth.socketUserId);
+    }
+
+    toast.success("Login Successfully", "/admin/dashboard");
   } catch (error) {
-    // backend error message example
-    // console.log(error);
     toast.error(error.message);
   } finally {
     isLoading.value = false;
