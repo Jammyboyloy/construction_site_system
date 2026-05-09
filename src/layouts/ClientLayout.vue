@@ -19,20 +19,18 @@
           </div>
 
           <div class="nav-info d-flex align-items-center">
-            
-
             <!-- Bell -->
             <n-dropdown
               trigger="click"
-              :options="notifOptions"
-              @select="handleNotifSelect"
+              :options="notificationOptions"
               :theme-overrides="dropdownTheme"
               style="min-width: 280px; padding: 7px 4px"
+              @update:show="handleDropdownOpen"
             >
               <div class="bell-wrapper">
                 <Bell :size="20" />
-                <span v-if="notifications.length > 0" class="bell-badge">
-                  {{ notifications.length > 99 ? "99+" : notifications.length }}
+                <span v-if="unreadCount > 0" class="bell-badge">
+                  {{ unreadCount > 99 ? "99+" : unreadCount }}
                 </span>
               </div>
             </n-dropdown>
@@ -51,7 +49,7 @@
                 class="d-flex gap-2 align-items-center rounded-3 profile cursor-pointer"
               >
                 <img
-                  src="https://i.pinimg.com/736x/d1/07/da/d107da6a1d1fd935c529ed7a39c07aac.jpg"
+                  :src="getProfile.avatar"
                   alt=""
                   class="img-fluid rounded-circle object-fit-cover"
                   style="width: 35px; height: 35px"
@@ -176,6 +174,8 @@ import {
   LogOut,
   Pencil,
   Bell,
+  BellRing,
+  BellOff,
   Earth,
   ChevronDown,
   Menu,
@@ -184,6 +184,7 @@ import {
 } from "lucide-vue-next";
 import { useProfileStore } from "@/stores/profile";
 import { storeToRefs } from "pinia";
+import { useNotificationStore } from "@/stores/notification";
 
 const drawerActive = ref(false);
 const router = useRouter();
@@ -192,36 +193,58 @@ const { t, locale } = useI18n();
 const profileStore = useProfileStore();
 const { getProfile } = storeToRefs(profileStore);
 
+const notificationStore = useNotificationStore();
+const { getNotification: notifications, unreadCount } =
+  storeToRefs(notificationStore);
+
 onMounted(async () => {
   await profileStore.getMe();
+  await notificationStore.getMyNotification();
 });
 
-const notifications = ref([
-  { id: 1, message: "Your proposal was accepted!" },
-  { id: 2, message: "New message from client" },
-  { id: 3, message: "Payment released" },
-]);
+function timeAgo(dateStr) {
+  const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
 
-const notifOptions = computed(() => {
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}mn ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 2592000) return `${Math.floor(diff / 604800)}w ago`;
+  if (diff < 31536000) return `${Math.floor(diff / 2592000)}mo ago`;
+  return `${Math.floor(diff / 31536000)}y ago`;
+}
+
+const notificationOptions = computed(() => {
   if (notifications.value.length === 0) {
     return [
       {
         label: "No notifications",
         key: "empty",
         disabled: true,
-        icon: renderIcon(Bell),
+        icon: renderIcon(BellOff),
       },
     ];
   }
   return notifications.value.map((n) => ({
-    label: n.message,
     key: String(n.id),
-    icon: renderIcon(Bell),
+    icon: renderIcon(BellRing),
+    label: () =>
+      h("div", { style: "display: flex; gap: 8px" }, [
+        h("span", { style: "font-size: 14px" }, n.message),
+        h("span", { style: "font-size: 14px" }, "·"),
+        h(
+          "span",
+          { style: "font-size: 12px; color: #999" },
+          timeAgo(n.created_at),
+        ),
+      ]),
   }));
 });
 
-function handleNotifSelect(key) {
-  notifications.value = notifications.value.filter((n) => String(n.id) !== key);
+async function handleDropdownOpen(show) {
+  if (show && unreadCount.value > 0) {
+    await notificationStore.readAllNotification();
+  }
 }
 
 function renderIcon(icon) {
@@ -431,231 +454,3 @@ const themeOverrides = {
   },
 };
 </script>
-
-<style scoped>
-.navbar-wrapper {
-  padding: 12px 12px 0 12px;
-  background-color: #f3f4f6;
-  flex-shrink: 0;
-}
-
-.navbar-inner {
-  background-color: #ffffff;
-  border-radius: 16px;
-  padding: 8px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-info {
-  gap: 15px;
-}
-
-.layout-wrapper {
-  flex: 1;
-  padding: 8px 12px;
-  background-color: #f3f4f6;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.layout-card {
-  flex: 1;
-  border-radius: 16px !important;
-  overflow: hidden !important;
-  min-height: 0;
-}
-
-.content-area {
-  padding: 15px;
-}
-
-/* Hamburger button */
-.hamburger-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1f1f1f;
-  transition: background 0.2s;
-}
-.hamburger-btn:hover {
-  background-color: #f3f4f6;
-}
-
-/* Drawer profile section */
-.drawer-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 16px 12px;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 4px;
-}
-
-.bell-wrapper {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background 0.2s;
-}
-
-.bell-wrapper:hover {
-  background-color: #f3f4f6;
-}
-
-.custom-trigger {
-  position: absolute;
-  right: -13px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 999;
-  transition: background 0.2s;
-}
-
-.bell-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  background-color: #f97316;
-  color: white;
-  font-size: 9px;
-  font-weight: 700;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-  line-height: 1;
-}
-
-.nav-divider {
-  width: 1px;
-  height: 24px;
-  background-color: #e5e7eb;
-}
-
-.profile {
-  padding: 3px 15px;
-}
-
-.profile:hover {
-  background-color: #f3f4f6;
-}
-
-:deep(.n-layout-sider) {
-  overflow: visible !important;
-}
-
-:deep(.n-menu-item-content) {
-  border-left: none !important;
-  border-radius: 10px !important;
-  margin: 2px 8px !important;
-  padding-left: 12px !important;
-  position: relative !important;
-}
-
-:deep(.n-menu-item-content::before) {
-  border-radius: 10px !important;
-  left: 0 !important;
-  right: 0 !important;
-}
-
-:deep(.n-menu-item-content__icon) {
-  width: 32px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-right: 10px !important;
-  flex-shrink: 0 !important;
-}
-
-:deep(.n-menu-item--indent) {
-  width: 0 !important;
-}
-
-:deep(.n-submenu-children .n-menu-item-content) {
-  padding-left: 40px !important;
-  margin-left: 8px !important;
-  margin-right: 8px !important;
-}
-
-:deep(.n-menu-item-content--selected::after),
-:deep(.n-menu--collapsed .n-menu-item-content--child-active-closed::after) {
-  content: "" !important;
-  position: absolute !important;
-  left: 8px !important;
-  top: 8px !important;
-  bottom: 8px !important;
-  width: 3px !important;
-  background-color: #f97316 !important;
-  border-radius: 99px !important;
-}
-
-:deep(.n-submenu-children .n-menu-item-content--selected::after) {
-  content: "" !important;
-  position: absolute !important;
-  left: 35px !important;
-  top: 8px !important;
-  bottom: 8px !important;
-  width: 4px !important;
-  background-color: #f97316 !important;
-  border-radius: 99px !important;
-}
-
-:deep(.n-scrollbar-rail.n-scrollbar-rail--vertical) {
-  top: 77px !important;
-  bottom: 30px !important;
-  right: 4px !important;
-}
-
-:deep(.n-scrollbar-rail.n-scrollbar-rail--vertical .n-scrollbar-thumb) {
-  border-radius: 99px !important;
-  background-color: rgba(0, 0, 0, 0.15) !important;
-  width: 6px !important;
-}
-
-/* Hide desktop sider on mobile at layout level */
-@media (max-width: 991.98px) {
-  :deep(.n-layout-sider) {
-    display: none !important;
-  }
-  .navbar-inner {
-    padding: 8px 5px;
-  }
-  .nav-info {
-    gap: 0px;
-  }
-  .profile {
-    padding-right: 5px;
-  }
-}
-
-.responsive-title {
-  font-size: clamp(13px, 3vw, 20px);
-}
-</style>

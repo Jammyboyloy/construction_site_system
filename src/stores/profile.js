@@ -8,7 +8,6 @@ export const useProfileStore = defineStore("profile", () => {
   const getMe = async () => {
     const res = await api.get("/auth/me");
     getProfile.value = res.data.data;
-    console.log(getProfile)
   };
 
   return { getProfile, getMe };
