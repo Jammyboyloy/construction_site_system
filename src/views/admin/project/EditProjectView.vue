@@ -93,18 +93,19 @@ import { useClientStore } from "@/stores/client";
 import { storeToRefs } from "pinia";
 import { useProjectStore } from "@/stores/project";
 import { notify } from "@/utils/toast";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+const onlyAllowNumber = (value) => !value || /^\d+(\.\d*)?$/.test(value);
 
 const router = useRouter();
 const toast = notify(router);
 
+const route = useRoute();
+let id = route.params.id;
+
 const clientStore = useClientStore();
 const projectStore = useProjectStore();
 const { getAllClient: client } = storeToRefs(clientStore);
-
-onMounted(async () => {
-  await clientStore.getAllClientStore();
-});
+const { getById: project } = storeToRefs(projectStore);
 
 const projectName = ref("");
 const location = ref("");
@@ -116,7 +117,30 @@ const budget = ref("");
 const file = ref(null);
 const imgRef = ref(null);
 
-const onlyAllowNumber = (value) => !value || /^\d+$/.test(value);
+onMounted(async () => {
+  await clientStore.getAllClientStore();
+  await projectStore.getProjectById(id);
+
+  const p = project.value;
+
+  projectName.value = p?.name;
+  location.value = p?.location;
+
+  clientName.value = p?.client?.client_id;
+
+  budget.value = p?.estimated_budget != null ? String(p.estimated_budget) : "";
+
+  if (p?.thumbnail) {
+    file.value = { url: p.thumbnail, file: null };
+  }
+
+  if (p?.start_date && p?.end_date) {
+    range.value = [
+      new Date(p.start_date).getTime(),
+      new Date(p.end_date).getTime(),
+    ];
+  }
+});
 
 function handleChange(options) {
   const f = options.file.file;
@@ -164,13 +188,12 @@ const handleSubmit = async () => {
   };
 
   try {
-    const res = await projectStore.createProject(data);
-    const project_id = res?.data?.project_id;
+    await projectStore.editProject(id, data);
 
-    if (file.value?.file && project_id) {
+    if (file.value?.file) {
       const formData = new FormData();
       formData.append("thumbnail", file.value.file);
-      await projectStore.updateThumbnailProject(project_id, formData);
+      await projectStore.updateThumbnailProject(id, formData);
     }
 
     await projectStore.getAllProject();

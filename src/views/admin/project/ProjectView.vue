@@ -154,12 +154,24 @@
           </div>
         </div>
       </div>
+
+      <n-modal
+        v-model:show="showDeleteModal"
+        preset="dialog"
+        type="error"
+        title="Delete Confirmation"
+        content="Are you sure you want to delete this project?"
+        positive-text="Delete"
+        negative-text="Cancel"
+        @positive-click="confirmDelete"
+        @negative-click="showDeleteModal = false"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, h, onMounted } from "vue";
+import { computed, h, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import {
@@ -214,13 +226,27 @@ const options = computed(() => [
   { label: "Delete Project", key: "deleteProject", icon: renderIcon(Trash2) },
 ]);
 
+const showDeleteModal = ref(false);
+const projectToDelete = ref(null);
+
 function handleProfileSelect(key, projectId) {
   if (key === "addMaterial")
     router.push(`/admin/viewProjectById/${projectId}?tab=material`);
   if (key === "editProject") router.push(`/admin/editProject/${projectId}`);
   if (key === "deleteProject") {
-    // Add your delete logic here
-    console.log("Deleting project:", projectId);
+    projectToDelete.value = projectId;
+    showDeleteModal.value = true;
+  }
+}
+
+async function confirmDelete() {
+  try {
+    await projectStore.deleteProject(projectToDelete.value);
+    await projectStore.getAllProject();
+    showDeleteModal.value = false;
+    toast.success("Project Deleted Successfully");
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -248,4 +274,5 @@ function createDropdownOptions(optionsList) {
 .dropdown-trigger:hover {
   background-color: #f3f4f6;
 }
+
 </style>

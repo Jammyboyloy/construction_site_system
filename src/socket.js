@@ -1,7 +1,6 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
-// const SOCKET_URL = "https://construction-site-api-3uii.onrender.com";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false,
@@ -20,19 +19,23 @@ export const connectSocket = (userId) => {
   }
 
   socket.auth = { userId: normalizedUserId };
-  socket.connect();
 
   socket.off("connect");
   socket.off("connect_error");
 
   socket.on("connect", () => {
     socket.emit("register", normalizedUserId);
-    console.log("Socket connected:", socket.id);
+    console.log("Socket connected:", {
+      socketId: socket.id,
+      userId: normalizedUserId,
+    });
   });
 
   socket.on("connect_error", (err) => {
     console.error("Socket connection error:", err.message);
   });
+
+  socket.connect();
 };
 
 export const disconnectSocket = () => {

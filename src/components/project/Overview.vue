@@ -152,7 +152,9 @@
             <div>
               <div class="d-flex mb-2">
                 <DollarSign size="20" class="text-prime" />
-                <h5 class="m-0 fw-bold ls text-prime">50000</h5>
+                <h5 class="m-0 fw-bold ls text-prime">
+                  {{ props.budget.used }}
+                </h5>
               </div>
               <p class="m-0 text-secondary fs-7">Utilized to date</p>
             </div>
@@ -160,7 +162,7 @@
           <div class="mb-2">
             <n-progress
               type="line"
-              :percentage="60"
+              :percentage="props.budget.progress"
               :show-indicator="false"
               processing
               :height="15"
@@ -170,7 +172,9 @@
           <div class="d-flex fs-7 justify-content-end mt-1">
             <p class="m-0 text-secondary me-1">Project Budget:</p>
             <DollarSign size="15" class="text-prime" />
-            <p class="m-0 fw-bold ls text-prime me-1">50000</p>
+            <p class="m-0 fw-bold ls text-prime me-1">
+              {{ props.budget.remaining }}
+            </p>
             <p class="m-0 text-secondary">Remaining</p>
           </div>
         </div>
@@ -190,7 +194,7 @@
               draggable
             >
               <n-image
-                v-for="(src, index) in photos"
+                v-for="(src, index) in props.photos"
                 :key="index"
                 :src="src"
                 object-fit="cover"
@@ -212,19 +216,20 @@
         <n-data-table
           :columns="columns"
           :data="data"
-          :pagination="data.length >= 4 ? { pageSize: 3 } : false"
+          :pagination="data.length >= 6 ? { pageSize: 5 } : false"
           :bordered="false"
-          :class="['task-table', { 'h-100': data.length === 0 }]"
+          class="task-table"
         />
       </div>
+
       <div class="col-lg-6">
         <h5 class="fw-bold mb-3 text-center">Material</h5>
         <n-data-table
           :columns="columns2"
           :data="data2"
-          :pagination="data2.length >= 4 ? { pageSize: 3 } : false"
+          :pagination="data2.length >= 6 ? { pageSize: 5 } : false"
           :bordered="false"
-          :class="['task-table', { 'h-100': data2.length === 0 }]"
+          class="task-table"
         />
       </div>
     </div>
@@ -265,6 +270,22 @@ const props = defineProps({
   project: {
     type: Object,
     default: null,
+  },
+  budget: {
+    type: Object,
+    default: null,
+  },
+  material: {
+    type: Array,
+    default: () => [],
+  },
+  task: {
+    type: Array,
+    default: () => [],
+  },
+  photos: {
+    type: Array,
+    default: () => [],
   },
 });
 
@@ -403,36 +424,37 @@ function formatDate(dateStr) {
   });
 }
 
-const photos = [
-  "https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg",
-  "https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg",
-  "https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg",
-  "https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg",
-];
+const data = computed(() => {
+  return props.task || [];
+});
 
-const createColumns = () => [
+const columns = [
   {
     title: "TASK NAME",
-    key: "taskName",
+    key: "title",
     render(row) {
-      return h(
-        "span",
-        { style: "font-weight: 500; color: #333;" },
-        row.taskName,
-      );
+      return h("span", { style: "font-weight: 500; color: #333;" }, row.title);
     },
   },
   {
     title: "STATUS",
     key: "status",
     render(row) {
+      const typeMap = {
+        completed: "success",
+        in_progress: "info",
+        pending: "warning",
+      };
+
+      const type = typeMap[row.status?.toLowerCase()] || "default";
+
       return h(
         NTag,
         {
           bordered: false,
           round: true,
           size: "small",
-          type: row.statusType,
+          type: type,
           style: "font-weight: 500; padding: 0 15px",
         },
         { default: () => row.status },
@@ -443,19 +465,28 @@ const createColumns = () => [
     title: "PROGRESS",
     key: "progress",
     render(row) {
+      const color =
+        row.progress === 100
+          ? "#22c55e"
+          : row.progress === 0
+            ? "#000"
+            : "#3b82f6";
+
       return h("div", { class: "d-flex align-items-center" }, [
         h(
           "span",
-          { style: "font-weight: bold; margin-right: 12px; min-width: 35px" },
+          {
+            style: `font-weight: bold; margin-right: 12px; min-width: 35px; color: ${color}`,
+          },
           `${row.progress}%`,
         ),
         h(NProgress, {
           type: "line",
           percentage: row.progress,
           showIndicator: false,
-          status: row.statusType === "success" ? "success" : "default",
           railColor: "#edf2f7",
           style: "width: 100px",
+          color: color,
           processing: true,
         }),
       ]);
@@ -463,58 +494,9 @@ const createColumns = () => [
   },
 ];
 
-const data = ref([
-  {
-    taskName: "Foundation Pouring",
-    status: "In Progress",
-    progress: 75,
-    statusType: "info",
-  },
-  {
-    taskName: "Electrical Wiring - L1",
-    status: "Pending",
-    progress: 0,
-    statusType: "warning",
-  },
-  {
-    taskName: "Material Log Audit",
-    status: "Completed",
-    progress: 100,
-    statusType: "success",
-  },
-  {
-    taskName: "Site Setup",
-    status: "Completed",
-    progress: 100,
-    statusType: "success",
-  },
-]);
-
-const columns = createColumns();
-
-const data2 = [
-  {
-    name: "Structural Steel",
-    used: "62",
-    remaining: "38% left",
-    image:
-      "https://i.pinimg.com/736x/2c/3e/2a/2c3e2a779188e0b213f56e9c1356f103.jpg",
-  },
-  {
-    name: "Concrete Mix",
-    used: "450",
-    remaining: "55% left",
-    image:
-      "https://i.pinimg.com/736x/8a/7b/4c/8a7b4c6e945c22881b228f823126f333.jpg",
-  },
-  {
-    name: "Elec. Conduit",
-    used: "1.2",
-    remaining: "82% left",
-    image:
-      "https://i.pinimg.com/736x/01/f9/3c/01f93c667e58832168481358912e7311.jpg",
-  },
-];
+const data2 = computed(() => {
+  return props.material || [];
+});
 
 const columns2 = [
   {
@@ -533,16 +515,35 @@ const columns2 = [
     },
   },
   {
+    title: "Initial Quantity",
+    key: "initial_quantity",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, row.initial_quantity);
+    },
+  },
+  {
+    title: "Cost Per Unit",
+    key: "cost_per_unit",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, `$${row.cost_per_unit}`);
+    },
+  },
+  {
     title: "USED",
-    key: "used",
+    key: "used_quantity",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, row.used_quantity);
+    },
   },
   {
     title: "REMAINING",
-    key: "remaining",
+    key: "remaining_quantity",
+    align: "center",
     render(row) {
-      return h("div", {}, [
-        h("span", { class: "text-prime fw-bold me-1" }, row.remaining),
-      ]);
+      return h("span", { class: "text-prime fw-bold" }, row.remaining_quantity);
     },
   },
 ];
