@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container">
     <section class="vh-100 d-flex align-items-center justify-content-center">
       <!-- <div v-if="auth.loading" class="loading-only">
         <div class="loader"></div>
@@ -8,7 +8,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-12 col-md-8 col-lg-5">
-            <div class="card shadow-sm border-0">
+            <div class="card shadow-lg border-0 rounded-4 p-4 forgot-card">
               <div class="card-body p-5 position-relative">
                 <h2 class="fw-bold mb-4 text-center">Login</h2>
 
@@ -54,16 +54,14 @@
                         Remember me
                       </label>
                     </div>
-                    <a href="#" class="text-decoration-none small">
-                      Forgot password?
-                    </a>
+                    <router-link to="forget" class="text-decoration-none small text-prime">Forgot password?</router-link>
                   </div>
 
                   <div class="d-grid">
                     <button
                       :disabled="isLoading"
                       type="submit"
-                      class="btn btn-primary btn-lg"
+                      class="btn bg-prime text-white btn-lg"
                     >
                       <span
                         v-if="isLoading"
@@ -75,7 +73,7 @@
 
                   <p class="text-center mt-4 mb-0">
                     Don't have an account?
-                    <router-link to="/" class="text-decoration-none"
+                    <router-link to="/" class="text-prime text-decoration-none"
                       >Sign Up</router-link
                     >
                   </p>
