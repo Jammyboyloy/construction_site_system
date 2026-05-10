@@ -7,6 +7,7 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
+      redirect: "/login",
       component: HomeView,
     },
     {
@@ -31,7 +32,7 @@ const router = createRouter({
           component: () => import("../views/admin/project/ProjectView.vue"),
         },
         {
-          path: "viewProjectById",
+          path: "viewProjectById/:id",
           component: () => import("../views/admin/project/ViewProjectById.vue"),
         },
         {
@@ -46,15 +47,71 @@ const router = createRouter({
     },
     {
       path: "/supervisor/",
-      component: () => import("../layouts/AdminLayout.vue"),
+      component: () => import("../layouts/SupervisorLayout.vue"),
       children: [
         {
-          path: "dashboard",
-          component: () => import("../views/DashboardView.vue"),
+          path: "myProject",
+          component: () => import("../views/supervisor/GetMyProjectView.vue"),
         },
         {
-          path: "createProject",
-          component: () => import("../views/admin/project/CreateProjectView.vue"),
+          path: "attendance",
+          component: () => import("../views/supervisor/CheckInCheckOutView.vue"),
+        },
+        {
+          path: "createTask",
+          component: () => import("../views/supervisor/CreateTaskView.vue"),
+        },
+        {
+          path: "createDailyReport",
+          component: () => import("../views/supervisor/CreateDailyReportView.vue"),
+        },
+        {
+          path: "PreviewTaskWorker",
+          component: () => import("../views/supervisor/PreviewTaskWorkerView.vue"),
+        },
+        {
+          path: "ViewTask",
+          component: () => import("../views/supervisor/ViewProjectTask.vue"),
+        },
+        {
+          path: "myProfile",
+          component: () => import("../views/MyProfileView.vue"),
+        },
+      ],
+    },
+    {
+      path: "/worker/",
+      component: () => import("../layouts/WorkerLayout.vue"),
+      children: [
+        {
+          path: "myProject",
+          component: () => import("../views/worker/GetMyProject.vue"),
+        },
+        {
+          path: "myTask",
+          component: () => import("../views/worker/GetMyTaskView.vue"),
+        },
+        {
+          path: "scanQr",
+          component: () => import("../views/worker/ScanAttendance.vue"),
+        },
+      ],
+    },
+    {
+      path: "/client/",
+      component: () => import("../layouts/ClientLayout.vue"),
+      children: [
+        {
+          path: "myProject",
+          component: () => import("../views/supervisor/GetMyProjectView.vue"),
+        },
+        {
+          path: "attendance",
+          component: () => import("../views/supervisor/CheckInCheckOutView.vue"),
+        },
+        {
+          path: "ViewTask",
+          component: () => import("../views/supervisor/ViewProjectTask.vue"),
         },
       ],
     },

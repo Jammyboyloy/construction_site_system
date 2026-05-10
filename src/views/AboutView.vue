@@ -1,9 +1,10 @@
 <template>
-  <div class="container-fluid bg-danger">
-    <h1 class="text-white">This is an about page</h1>
+  <div class="container py-3">
+   
   </div>
 </template>
 
-<style>
+<script setup>
+import axios from "axios";
 
-</style>
+</script>
