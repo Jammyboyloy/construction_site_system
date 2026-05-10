@@ -16,6 +16,21 @@ const router = createRouter({
       component: () => import("../views/LoginView.vue"),
     },
     {
+      path: '/forget',
+      name: 'forget',
+      component: () => import("../views/forgot password/GiveEmailView.vue")
+    },
+    {
+      path: '/otp',
+      name: 'otp',
+      component: () => import("../views/forgot password/OTPView.vue")
+    },
+    {
+      path: '/newpassword',
+      name: 'newpassword',
+      component: () => import("../views/forgot password/NewPasswordView.vue")
+    },
+    {
       path: "/admin/",
       component: () => import("../layouts/AdminLayout.vue"),
       children: [

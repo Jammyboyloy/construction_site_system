@@ -54,9 +54,7 @@
                         Remember me
                       </label>
                     </div>
-                    <a href="#" class="text-decoration-none small">
-                      Forgot password?
-                    </a>
+                    <router-link to="forget" class="text-decoration-none small">Forgot password?</router-link>
                   </div>
 
                   <div class="d-grid">
