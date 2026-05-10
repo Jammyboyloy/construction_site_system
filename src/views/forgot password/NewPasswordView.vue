@@ -41,7 +41,7 @@
 
       <!-- Button -->
       <button
-        class="btn btn-primary w-100 btn-lg"
+        class="btn bg-prime text-white w-100 btn-lg"
         @click="handleSubmit"
         :disabled="loading"
       >
@@ -83,8 +83,8 @@ const handleSubmit = async () => {
   }
 
   try {
-    loading.value = true;
-
+    // loading.value = true;
+    console.log(new_password.value);
     const res = await api.post("user/reset-password",{
         email: email.value,
         new_password: new_password.value,
@@ -102,9 +102,7 @@ const handleSubmit = async () => {
     console.log(error);
     toast.error(error.response?.data?.message || "Reset failed");
 
-  } finally {
-    loading.value = false;
-  }
+  } 
 };
 </script>
 

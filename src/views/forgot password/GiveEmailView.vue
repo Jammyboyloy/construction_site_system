@@ -30,7 +30,7 @@
         <!-- Button -->
         <button
           type="submit"
-          class="btn btn-primary w-100 btn-lg"
+          class="btn bg-prime text-white w-100 btn-lg"
         >
           Send Reset Link
         </button>
@@ -47,7 +47,7 @@
       <div class="text-center mt-4">
         <router-link
           to="/login"
-          class="text-decoration-none"
+          class="text-prime text-decoration-none"
         >
           ← Back to Login
         </router-link>
@@ -61,53 +61,42 @@
 import router from "@/router";
 import { ref } from "vue";
 import { notify } from "@/utils/toast";
+import api from "@/api/https";
 
 const toast = notify(router);
 const email = ref("");
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!email.value) {
     toast.error("Please input email");
     return;
   }
+console.log(email.value);
+  try {
+    // loading.value = true;
 
-  // fake success
-  toast.success("OTP sent successfully (TEST MODE)");
+    const response = await api.post("/user/forgot-password",
+      {
+        email: email.value,
+      }
+    );
 
-  router.push("/otp");
+
+    toast.success("OTP sent successfully!");
+
+    localStorage.setItem("email", email.value);
+    // go to otp page
+    router.push("/otp");
+
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Something went wrong"
+    );
+
+  } 
 };
-// const handleSubmit = async () => {
-//   if (!email.value) {
-//     toast.error("Please input email");
-//     return;
-//   }
-
-//   try {
-//     loading.value = true;
-
-//     const response = await api.post("/user/forgot-password",
-//       {
-//         email: email.value,
-//       }
-//     );
-
-
-//     toast.success("OTP sent successfully!");
-
-//     // go to otp page
-//     router.push("/otp");
-
-//   } catch (error) {
-//     console.log(error);
-
-//     toast.error(
-//       error.response?.data?.message ||
-//       "Something went wrong"
-//     );
-
-//   } finally {
-//     loading.value = false;
-//   }
-// };
 </script>
 
 <style scoped>
