@@ -74,7 +74,7 @@
       <n-data-table
         :columns="columns"
         :data="data"
-        :pagination="data.length >= 4 ? { pageSize: 3 } : false"
+        :pagination="data.length >= 6 ? { pageSize: 5 } : false"
         :bordered="false"
         :class="['task-table tb-h', { 'h-100': data.length === 0 }]"
       />
@@ -113,6 +113,7 @@ const props = defineProps({
 });
 
 const supervisorStore = useSupervisorStore();
+const workerStore = useWorkerStore();
 const showModal = ref(false);
 const selectedSupervisor = ref(null);
 
@@ -184,7 +185,7 @@ const options = computed(() => {
   }));
 });
 
-const emit = defineEmits(["updatedSupervisor"]);
+const emit = defineEmits(["updatedSupervisor", "updatedWorkers"]);
 
 const confirmSupervisor = async () => {
   if (!selectedSupervisor.value) return;
@@ -221,7 +222,7 @@ const deleteSelectedWorker = async () => {
         selectedWorker.value.worker_id,
       );
 
-      await props.worker(props.project.id);
+      emit("updatedWorkers");
     } catch (error) {
       console.error("Delete failed:", error);
     }

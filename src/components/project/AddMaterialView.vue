@@ -68,7 +68,23 @@
 import { nextTick, ref } from "vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { Trash2 } from "lucide-vue-next";
+import { useMaterialStore } from "@/stores/material";
+import { notify } from "@/utils/toast";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+const toast = notify(router);
+
+const props = defineProps({
+  project: {
+    type: Object,
+    default: null,
+  },
+});
+
+const emit = defineEmits("[updateMaterial]");
+
+const materialStore = useMaterialStore();
 const materialName = ref("");
 const quantity = ref("");
 const supplier = ref("");
@@ -98,18 +114,33 @@ function openPreview() {
   });
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   const formData = new FormData();
-  formData.append("materialName", materialName.value);
+
+  formData.append("project_id", props.project.id);
+  formData.append("name", materialName.value);
   formData.append("quantity", quantity.value);
   formData.append("supplier", supplier.value);
-  formData.append("cost", cost.value);
+  formData.append("cost_per_unit", cost.value);
+
   if (file.value?.file) {
     formData.append("image", file.value.file);
   }
 
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
+  await materialStore.addMaterialByProject(formData);
+
+  // reset form
+  materialName.value = "";
+  quantity.value = "";
+  supplier.value = "";
+  cost.value = "";
+  file.value = null;
+
+  emit("updateMaterial");
+
+  toast.success("Add Material Successfully", {
+    path: `/admin/viewProjectById/${props.project.id}`,
+    query: { tab: "overview" },
+  });
 };
 </script>
