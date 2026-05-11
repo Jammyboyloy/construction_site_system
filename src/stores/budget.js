@@ -8,7 +8,7 @@ export const useBudgetStore = defineStore("budget", () => {
   const getBudgetByProjectStore = async (project_id) => {
     try {
       const res = await api.get(`/api/projects/budget-status/${project_id}`);
-      console.log(res)
+      // console.log(res)
       getBudgetByProject.value = res.data;
       // console.log(getBudgetByProject.value);
     } catch (error) {

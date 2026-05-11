@@ -16,19 +16,19 @@ const router = createRouter({
       component: () => import("../views/LoginView.vue"),
     },
     {
-      path: '/forget',
-      name: 'forget',
-      component: () => import("../views/forgot password/GiveEmailView.vue")
+      path: "/forget",
+      name: "forget",
+      component: () => import("../views/forgot password/GiveEmailView.vue"),
     },
     {
-      path: '/otp',
-      name: 'otp',
-      component: () => import("../views/forgot password/OTPView.vue")
+      path: "/otp",
+      name: "otp",
+      component: () => import("../views/forgot password/OTPView.vue"),
     },
     {
-      path: '/newpassword',
-      name: 'newpassword',
-      component: () => import("../views/forgot password/NewPasswordView.vue")
+      path: "/newpassword",
+      name: "newpassword",
+      component: () => import("../views/forgot password/NewPasswordView.vue"),
     },
     {
       path: "/admin/",
@@ -40,7 +40,8 @@ const router = createRouter({
         },
         {
           path: "createProject",
-          component: () => import("../views/admin/project/CreateProjectView.vue"),
+          component: () =>
+            import("../views/admin/project/CreateProjectView.vue"),
         },
         {
           path: "editProject/:id",
@@ -59,8 +60,16 @@ const router = createRouter({
           component: () => import("../views/admin/member/CreateMemberView.vue"),
         },
         {
+          path: "viewMember",
+          component: () => import("../views/admin/member/ViewMember.vue"),
+        },
+        {
           path: "about",
           component: () => import("../views/AboutView.vue"),
+        },
+        {
+          path: "myProfile",
+          component: () => import("../views/MyProfileView.vue"),
         },
       ],
     },
@@ -74,7 +83,8 @@ const router = createRouter({
         },
         {
           path: "attendance",
-          component: () => import("../views/supervisor/CheckInCheckOutView.vue"),
+          component: () =>
+            import("../views/supervisor/CheckInCheckOutView.vue"),
         },
         {
           path: "createTask",
@@ -82,11 +92,13 @@ const router = createRouter({
         },
         {
           path: "createDailyReport",
-          component: () => import("../views/supervisor/CreateDailyReportView.vue"),
+          component: () =>
+            import("../views/supervisor/CreateDailyReportView.vue"),
         },
         {
           path: "PreviewTaskWorker",
-          component: () => import("../views/supervisor/PreviewTaskWorkerView.vue"),
+          component: () =>
+            import("../views/supervisor/PreviewTaskWorkerView.vue"),
         },
         {
           path: "ViewTask",
@@ -114,6 +126,10 @@ const router = createRouter({
           path: "scanQr",
           component: () => import("../views/worker/ScanAttendance.vue"),
         },
+        {
+          path: "myProfile",
+          component: () => import("../views/MyProfileView.vue"),
+        },
       ],
     },
     {
@@ -126,11 +142,16 @@ const router = createRouter({
         },
         {
           path: "attendance",
-          component: () => import("../views/supervisor/CheckInCheckOutView.vue"),
+          component: () =>
+            import("../views/supervisor/CheckInCheckOutView.vue"),
         },
         {
           path: "ViewTask",
           component: () => import("../views/supervisor/ViewProjectTask.vue"),
+        },
+        {
+          path: "myProfile",
+          component: () => import("../views/MyProfileView.vue"),
         },
       ],
     },

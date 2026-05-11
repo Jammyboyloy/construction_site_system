@@ -165,7 +165,7 @@ const handleSubmit = async () => {
 
   try {
     const res = await projectStore.createProject(data);
-    const project_id = res?.data?.project_id;
+    const project_id = res?.data?.data?.project_id;
 
     if (file.value?.file && project_id) {
       const formData = new FormData();

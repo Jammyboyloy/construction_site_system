@@ -253,18 +253,12 @@ function renderIcon(icon) {
 
 const options = computed(() => [
   { label: t("profile.userProfile"), key: "profile", icon: renderIcon(User) },
-  {
-    label: t("profile.editProfile"),
-    key: "editProfile",
-    icon: renderIcon(Pencil),
-  },
   { label: t("profile.logout"), key: "logout", icon: renderIcon(LogOut) },
 ]);
 
 function handleProfileSelect(key) {
   if (key === "logout") router.push("/login");
-  if (key === "profile") router.push("/profile");
-  if (key === "editProfile") router.push("/edit-profile");
+  if (key === "profile") router.push("/worker/myProfile");
 }
 
 const menuOptions = computed(() => [
@@ -283,7 +277,11 @@ const menuOptions = computed(() => [
     key: "/worker/scanQr",
     icon: renderIcon(QrCode),
   },
-  { label: t("menu.settings"), key: "/about", icon: renderIcon(Settings) },
+  {
+    label: t("menu.settings"),
+    key: "/admin/myProfile",
+    icon: renderIcon(Settings),
+  },
 ]);
 
 const activeKey = ref(route.path);

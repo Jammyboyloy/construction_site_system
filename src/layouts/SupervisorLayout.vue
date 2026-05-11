@@ -264,8 +264,7 @@ const options = computed(() => [
 
 function handleProfileSelect(key) {
   if (key === "logout") router.push("/login");
-  if (key === "profile") router.push("/profile");
-  if (key === "editProfile") router.push("/edit-profile");
+  if (key === "profile") router.push("/supervisor/myProfile");
 }
 
 const menuOptions = computed(() => [

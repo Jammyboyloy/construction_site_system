@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex align-items-center mb-3">
-      <BaseTitle title="Skyline Tower-Phase 2" />
+      <BaseTitle :title="project.name" />
     </div>
 
     <n-tabs type="line" animated>
@@ -16,37 +16,55 @@
               <div class="card shadow-box rounded-4 border-3">
                 <div class="card-img" style="height: 245px">
                   <img
-                    src="https://i.pinimg.com/1200x/03/91/eb/0391eb49f97bd74318fd5e3797aeef26.jpg"
+                    :src="project.thumbnail"
                     alt="Project Image"
                     class="w-100 h-100 object-fit-cover rounded-4"
                   />
-                  <div class="card-img-overlay bg-dark opacity-50 rounded-4"></div>
+                  <div
+                    class="card-img-overlay bg-dark opacity-50 rounded-4"
+                  ></div>
+
                   <div class="card-img-overlay text-light">
-                    <h6 class="text-prime fs-6 ls fw-bold mt-2">Project Overview</h6>
-                    <h4 class="fw-bold mb-3 ls">Skyline Tower-Phase 2</h4>
+                    <h6 class="text-prime fs-6 ls fw-bold mt-2">
+                      Project Overview
+                    </h6>
+                    <h4 class="fw-bold mb-3 ls">{{ project.name }}</h4>
                     <div class="d-flex align-items-center mb-2">
                       <MapPin size="20" />
-                      <p class="m-0 fs-6 ms-1 fw-bold ls">Phnom Penh</p>
+                      <p class="m-0 fs-6 ms-1 fw-bold ls">
+                        {{ project.location }}
+                      </p>
                     </div>
+
                     <div class="d-flex align-items-center mb-2">
                       <DollarSign size="20" />
-                      <p class="m-0 fs-6 ms-1 fw-bold ls">50000</p>
+                      <p class="m-0 fs-6 ms-1 fw-bold ls">
+                        {{ project.estimated_budget }}
+                      </p>
                     </div>
-                    <div class="d-flex align-items-center fs-6 gap-1 mb-3 fw-bold ls">
+
+                    <div
+                      class="d-flex align-items-center fs-6 gap-1 mb-3 fw-bold ls"
+                    >
                       <Calendar size="20" />
-                      <p class="m-0 mx-1">20 Jan 2026</p>
+                      <p class="m-0 mx-1">
+                        {{ formatDate(project.start_date) }}
+                      </p>
                       <ArrowRight size="20" />
-                      <p class="m-0 mx-1">20 Jun 2027</p>
+                      <p class="m-0 mx-1">{{ formatDate(project.end_date) }}</p>
                     </div>
+
                     <div class="d-flex align-items-center gap-2">
                       <n-avatar
                         round
                         :size="35"
-                        src="https://i.pinimg.com/736x/d4/31/f3/d431f371ff8022afe63ca21363c87252.jpg"
+                        :src="project?.client?.avatar"
                       />
                       <div>
                         <p class="m-0 fs-8">Client</p>
-                        <p class="m-0 fs-7 fw-bold">Lay Jammy</p>
+                        <p class="m-0 fs-7 fw-bold">
+                          {{ project?.client?.name }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -58,14 +76,16 @@
               <div class="card p-4 rounded-4 shadow-box border-3">
                 <n-progress
                   type="circle"
-                  :percentage="65"
+                  :percentage="Number(project.project_progress)"
                   :offset-degree="180"
                   style="width: 160px"
                   :stroke-width="9"
                   color="#f97316"
                   class="mx-auto mb-3"
                 />
-                <p class="text-center mb-0 text-secondary fs-6">Overall Progress</p>
+                <p class="text-center mb-0 text-secondary fs-6">
+                  Overall Progress
+                </p>
               </div>
             </div>
           </div>
@@ -75,17 +95,21 @@
               <div class="card p-4 rounded-4 shadow-box border-3">
                 <div class="d-flex justify-content-between">
                   <div>
-                    <h5 class="mb-2 fw-bold">Budget Allocation</h5>
+                    <h5 class="mb-2 fw-bold">{{ project.name }}</h5>
                     <div class="d-flex mb-2">
                       <p class="m-0 fs-7 text-secondary me-1">Total Budget:</p>
                       <DollarSign size="15" class="text-prime" />
-                      <p class="m-0 fs-7 fw-bold ls text-prime">50000</p>
+                      <p class="m-0 fs-7 fw-bold ls text-prime">
+                        {{ project.estimated_budget }}
+                      </p>
                     </div>
                   </div>
                   <div>
                     <div class="d-flex mb-2">
                       <DollarSign size="20" class="text-prime" />
-                      <h5 class="m-0 fw-bold ls text-prime">50000</h5>
+                      <h5 class="m-0 fw-bold ls text-prime">
+                        {{ budget.used }}
+                      </h5>
                     </div>
                     <p class="m-0 text-secondary fs-7">Utilized to date</p>
                   </div>
@@ -93,7 +117,7 @@
                 <div class="mb-2">
                   <n-progress
                     type="line"
-                    :percentage="60"
+                    :percentage="budget.progress"
                     :show-indicator="false"
                     processing
                     :height="15"
@@ -103,7 +127,9 @@
                 <div class="d-flex fs-7 justify-content-end mt-1">
                   <p class="m-0 text-secondary me-1">Project Budget:</p>
                   <DollarSign size="15" class="text-prime" />
-                  <p class="m-0 fw-bold ls text-prime me-1">50000</p>
+                  <p class="m-0 fw-bold ls text-prime me-1">
+                    {{ budget.remaining }}
+                  </p>
                   <p class="m-0 text-secondary">Remaining</p>
                 </div>
               </div>
@@ -116,6 +142,7 @@
                 <h5 class="fw-bold mb-3">Site Progress Photos</h5>
                 <n-image-group>
                   <n-carousel
+                    v-if="dailyReportStore.allReportImages.length"
                     :slides-per-view="3"
                     :space-between="10"
                     :show-dots="false"
@@ -123,13 +150,18 @@
                     draggable
                   >
                     <n-image
-                      v-for="(src, index) in photos"
+                      v-for="(src, index) in dailyReportStore.allReportImages"
                       :key="index"
                       :src="src"
                       object-fit="cover"
-                      :style="{ borderRadius: '8px', width: '100%', height: '250px' }"
+                      :style="{
+                        borderRadius: '8px',
+                        width: '100%',
+                        height: '250px',
+                      }"
                     />
                   </n-carousel>
+                  <div v-else class="no-image">No Images Available</div>
                 </n-image-group>
               </div>
             </div>
@@ -141,9 +173,9 @@
               <n-data-table
                 :columns="columns2"
                 :data="data2"
-                :pagination="data2.length >= 4 ? { pageSize: 3 } : false"
+                :pagination="data2.length >= 6 ? { pageSize: 5 } : false"
                 :bordered="false"
-                :class="['task-table', { 'h-100': data2.length === 0 }]"
+                class="task-table"
               />
             </div>
           </div>
@@ -152,13 +184,13 @@
 
       <n-tab-pane name="team" tab="Team">
         <div class="row pt-3 g-4">
-
           <div class="col-lg-12">
             <n-data-table
               :columns="columns3"
               :data="data3"
+              :pagination="data3.length >= 7 ? { pageSize: 6 } : false"
               :bordered="false"
-              :class="['task-table tb-h', { 'h-100': data3.length === 0 }]"
+              class="task-table"
             />
           </div>
         </div>
@@ -170,7 +202,8 @@
             <h5 class="fw-bold mb-3">Daily Summary</h5>
             <div class="daily-summary bg-main shadow-box rounded-4">
               <p class="m-0">
-                Structural concrete pour for the main columns on Level 12 completed
+                Structural concrete pour for the main columns on Level 12
+                completed
               </p>
             </div>
           </div>
@@ -191,7 +224,11 @@
                     :key="index"
                     :src="src"
                     object-fit="cover"
-                    :style="{ borderRadius: '8px', width: '100%', height: '250px' }"
+                    :style="{
+                      borderRadius: '8px',
+                      width: '100%',
+                      height: '250px',
+                    }"
                   />
                 </n-carousel>
               </n-image-group>
@@ -226,7 +263,7 @@
 </template>
 
 <script setup>
-import { h, ref } from "vue";
+import { h, onMounted, ref, computed } from "vue";
 import { NTag, NAvatar, NProgress } from "naive-ui";
 import {
   MapPin,
@@ -237,6 +274,93 @@ import {
   User,
 } from "lucide-vue-next";
 import BaseTitle from "@/components/BaseTitle.vue";
+import { useProfileStore } from "@/stores/profile";
+import { storeToRefs } from "pinia";
+import { useBudgetStore } from "@/stores/budget";
+import { useDailyReportStore } from "@/stores/dailyReport";
+import { useMaterialStore } from "@/stores/material";
+import { useWorkerStore } from "@/stores/worker";
+
+const profileStore = useProfileStore();
+const budgetStore = useBudgetStore();
+const dailyReportStore = useDailyReportStore();
+const materialStore = useMaterialStore();
+const workerStore = useWorkerStore();
+const { getMyProject: project } = storeToRefs(profileStore);
+const { getBudgetByProject: budget } = storeToRefs(budgetStore);
+const { getMaterialByProject: material } = storeToRefs(materialStore);
+const { getWorkerByProject: worker } = storeToRefs(workerStore);
+
+onMounted(async () => {
+  await profileStore.getMyProjectStore();
+  await budgetStore.getBudgetByProjectStore();
+  await dailyReportStore.getDailyReportByProjectStore(project.value.id);
+  await materialStore.getMaterialByProjectStore(project.value.id);
+  await workerStore.getWorkerByProjectStore(project.value.id);
+});
+
+function formatDate(dateStr) {
+  if (!dateStr) return "-";
+  return new Date(dateStr).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+const data2 = computed(() => {
+  return material.value || [];
+});
+
+const columns2 = [
+  {
+    title: "MATERIAL NAME",
+    key: "name",
+    render(row) {
+      return h("div", { class: "d-flex align-items-center gap-2" }, [
+        h(NAvatar, {
+          src: row.image,
+          round: true,
+          size: 28,
+          objectFit: "cover",
+        }),
+        h("span", { class: "fw-medium" }, row.name),
+      ]);
+    },
+  },
+  {
+    title: "Initial Quantity",
+    key: "initial_quantity",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, row.initial_quantity);
+    },
+  },
+  {
+    title: "Cost Per Unit",
+    key: "cost_per_unit",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, `$${row.cost_per_unit}`);
+    },
+  },
+  {
+    title: "USED",
+    key: "used_quantity",
+    align: "center",
+    render(row) {
+      return h("span", { class: "fw-bold" }, row.used_quantity);
+    },
+  },
+  {
+    title: "REMAINING",
+    key: "remaining_quantity",
+    align: "center",
+    render(row) {
+      return h("span", { class: "text-prime fw-bold" }, row.remaining_quantity);
+    },
+  },
+];
 
 // ── Supervisor ──────────────────────────────────────────────
 const supervisor = ref({
@@ -253,55 +377,10 @@ const photos = [
   "https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg",
 ];
 
-// ── Material table (overview) ────────────────────────────────
-const data2 = [
-  { name: "Structural Steel", used: "62", remaining: "38% left", image: "https://i.pravatar.cc/40?img=1" },
-  { name: "Concrete Mix",     used: "450", remaining: "55% left", image: "https://i.pravatar.cc/40?img=2" },
-  { name: "Elec. Conduit",    used: "1.2", remaining: "82% left", image: "https://i.pravatar.cc/40?img=3" },
-];
-
-const columns2 = [
-  {
-    title: "MATERIAL NAME",
-    key: "name",
-    render: (row) =>
-      h("div", { class: "d-flex align-items-center gap-2" }, [
-        h(NAvatar, { src: row.image, round: true, size: 28, objectFit: "cover" }),
-        h("span", { class: "fw-medium" }, row.name),
-      ]),
-  },
-  { title: "USED", key: "used" },
-  {
-    title: "REMAINING",
-    key: "remaining",
-    render: (row) => h("span", { class: "text-prime fw-bold" }, row.remaining),
-  },
-];
-
 // ── Team table ───────────────────────────────────────────────
-const data3 = ref([
-  {
-    name: "John Doe",
-    image: "https://i.pravatar.cc/40?img=10",
-    skill: "Electrician",
-    rate: "$25",
-    active: true,
-  },
-  {
-    name: "Jane Smith",
-    image: "https://i.pravatar.cc/40?img=20",
-    skill: "Plumber",
-    rate: "$18",
-    active: false,
-  },
-  {
-    name: "Mike Johnson",
-    image: "https://i.pravatar.cc/40?img=30",
-    skill: "Carpenter",
-    rate: "$30",
-    active: true,
-  },
-]);
+const data3 = computed(() => {
+  return worker.value || [];
+});
 
 const columns3 = [
   {
@@ -309,7 +388,12 @@ const columns3 = [
     key: "name",
     render: (row) =>
       h("div", { class: "d-flex align-items-center gap-2" }, [
-        h(NAvatar, { src: row.image, round: true, size: 32, objectFit: "cover" }),
+        h(NAvatar, {
+          src: row.image,
+          round: true,
+          size: 32,
+          objectFit: "cover",
+        }),
         h("span", { class: "fw-medium" }, row.name),
       ]),
   },
@@ -317,8 +401,17 @@ const columns3 = [
     title: "SKILL TYPE",
     key: "skill",
     render: (row) =>
-      h(NTag, { bordered: false, round: true, size: "small", type: "info", style: "font-weight:500; padding:0 12px" },
-        { default: () => row.skill }),
+      h(
+        NTag,
+        {
+          bordered: false,
+          round: true,
+          size: "small",
+          type: "info",
+          style: "font-weight:500; padding:0 12px",
+        },
+        { default: () => row.skill },
+      ),
   },
   {
     title: "RATE",
@@ -329,8 +422,17 @@ const columns3 = [
     title: "STATUS",
     key: "status",
     render: (row) =>
-      h(NTag, { bordered: false, round: true, size: "small", type: row.active ? "success" : "error", style: "font-weight:500; padding:0 12px" },
-        { default: () => (row.active ? "Active" : "Inactive") }),
+      h(
+        NTag,
+        {
+          bordered: false,
+          round: true,
+          size: "small",
+          type: row.active ? "success" : "error",
+          style: "font-weight:500; padding:0 12px",
+        },
+        { default: () => (row.active ? "Active" : "Inactive") },
+      ),
   },
 ];
 
@@ -350,13 +452,28 @@ const materialColumns = [
 ];
 
 const materialData = [
-  { img: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=100", name: "Ready-mix Concrete (C40)", qty: "450 m³", note: "Level 12 slab" },
-  { img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100",    name: "Steel Rebar (16mm)",       qty: "2.4 Tons", note: "Column reinforcement" },
-  { img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=100", name: "Curing Compound",          qty: "12 Units", note: "Applied to slab area" },
+  {
+    img: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=100",
+    name: "Ready-mix Concrete (C40)",
+    qty: "450 m³",
+    note: "Level 12 slab",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100",
+    name: "Steel Rebar (16mm)",
+    qty: "2.4 Tons",
+    note: "Column reinforcement",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=100",
+    name: "Curing Compound",
+    qty: "12 Units",
+    note: "Applied to slab area",
+  },
 ];
 
 const expenseColumns = [
-  { title: "Type",        key: "type" },
+  { title: "Type", key: "type" },
   { title: "Description", key: "description" },
   {
     title: "Amount",
@@ -366,9 +483,9 @@ const expenseColumns = [
 ];
 
 const expenseData = [
-  { type: "Transport",  amount: 50,   description: "Truck fuel" },
-  { type: "Labor",      amount: 1200, description: "Extension for finishing crew" },
-  { type: "Equipment",  amount: 2200, description: "Specialized pump hire" },
+  { type: "Transport", amount: 50, description: "Truck fuel" },
+  { type: "Labor", amount: 1200, description: "Extension for finishing crew" },
+  { type: "Equipment", amount: 2200, description: "Specialized pump hire" },
 ];
 </script>
 
@@ -442,5 +559,16 @@ const expenseData = [
   font-weight: 600;
   line-height: 1.55;
   padding: 22px 24px;
+}
+
+.no-image {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #6b7280;
 }
 </style>
