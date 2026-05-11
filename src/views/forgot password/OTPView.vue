@@ -4,7 +4,7 @@ sphinxgod0+1@gmail.com
     <div class="card shadow-lg border-0 rounded-4 p-4 otp-card">
       <!-- Title -->
       <div class="text-center mb-4">
-        <h2 class="fw-bold">OTP Verification</h2>
+        <h2 class="ffw-bold mb-4 text-center">OTP Verification</h2>
         <p class="text-muted">Enter the 6-digit code sent to your email</p>
       </div>
 
