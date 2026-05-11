@@ -297,9 +297,8 @@ const target = 65;
 let animationFrame = null;
 
 const openSupervisorModal = async () => {
-  showModal.value = true;
-
   await supervisorStore.getAvailableSupervisors();
+  showModal.value = true;
 
   if (props.project?.supervisor) {
     selectedSupervisor.value = props.project.supervisor.supervisor_id;
@@ -338,22 +337,19 @@ const renderLabel = (option) => {
 const options = computed(() => {
   const available = supervisorStore.availableSupervisors || [];
 
-  let list = [...available];
+  // 1. Create a clean list without the current supervisor (if one exists)
+  let list = available.filter(
+    (s) => s.supervisor_id !== props.project?.supervisor?.supervisor_id,
+  );
 
-  // 🔥 If project has supervisor, make sure it's included
+  // 2. If the project has a supervisor, force them to the top (index 0)
   if (props.project?.supervisor) {
-    const exists = available.some(
-      (s) => s.supervisor_id === props.project.supervisor.supervisor_id,
-    );
-
-    if (!exists) {
-      list.unshift({
-        supervisor_id: props.project.supervisor.supervisor_id,
-        name: props.project.supervisor.name,
-        email: props.project.supervisor.email,
-        avatar: props.project.supervisor.avatar,
-      });
-    }
+    list.unshift({
+      supervisor_id: props.project.supervisor.supervisor_id,
+      name: props.project.supervisor.name,
+      email: props.project.supervisor.email,
+      avatar: props.project.supervisor.avatar,
+    });
   }
 
   return list.map((s) => ({
@@ -379,8 +375,8 @@ const confirmSupervisor = async () => {
       props.project.id,
       selectedSupervisor.value,
     );
-    showModal.value = false;
     emit("updatedSupervisor");
+    showModal.value = false;
   } catch (error) {
     console.log(error);
   }

@@ -233,6 +233,8 @@ function handleProfileSelect(key, projectId) {
   if (key === "addMaterial")
     router.push(`/admin/viewProjectById/${projectId}?tab=material`);
   if (key === "editProject") router.push(`/admin/editProject/${projectId}`);
+  if (key === "assignPersonnel")
+    router.push(`/admin/viewProjectById/${projectId}?tab=team`);
   if (key === "deleteProject") {
     projectToDelete.value = projectId;
     showDeleteModal.value = true;
@@ -241,10 +243,9 @@ function handleProfileSelect(key, projectId) {
 
 async function confirmDelete() {
   try {
-    await projectStore.deleteProject(projectToDelete.value);
+    await projectStore.removeProject(projectToDelete.value);
     await projectStore.getAllProject();
     showDeleteModal.value = false;
-    toast.success("Project Deleted Successfully");
   } catch (error) {
     console.log(error);
   }
@@ -274,5 +275,4 @@ function createDropdownOptions(optionsList) {
 .dropdown-trigger:hover {
   background-color: #f3f4f6;
 }
-
 </style>

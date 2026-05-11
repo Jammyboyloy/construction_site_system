@@ -18,7 +18,7 @@ export const useSupervisorStore = defineStore("supervisor", () => {
   const getAllSupervisors = async () => {
     try {
       const res = await api.get(
-        "/admin/supervisors?page=1&per_page=100&sortBy=created_at&sortDir=asc&search=",
+        "/admin/supervisors?page=1&per_page=100&sortBy=created_at&sortDir=desc&search=",
       );
       allSupervisors.value = res.data.data || [];
     } catch (error) {
