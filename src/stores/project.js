@@ -30,15 +30,25 @@ export const useProjectStore = defineStore("project", () => {
 
   const createProject = async (data) => {
     try {
-      await api.post("/admin/create-project", data);
+      const res = await api.post("/admin/create-project", data);
+      return res; 
     } catch (error) {
       console.log(error);
+      throw error;
     }
   };
 
   const editProject = async (project_id, data) => {
     try {
       await api.put(`/admin/project/${project_id}`, data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeProject = async (project_id) => {
+    try {
+      await api.delete(`/admin/project/${project_id}`);
     } catch (error) {
       console.log(error);
     }
@@ -59,6 +69,7 @@ export const useProjectStore = defineStore("project", () => {
     getById,
     createProject,
     editProject,
+    removeProject,
     updateThumbnailProject,
   };
 });

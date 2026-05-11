@@ -253,18 +253,12 @@ function renderIcon(icon) {
 
 const options = computed(() => [
   { label: t("profile.userProfile"), key: "profile", icon: renderIcon(User) },
-  {
-    label: t("profile.editProfile"),
-    key: "editProfile",
-    icon: renderIcon(Pencil),
-  },
   { label: t("profile.logout"), key: "logout", icon: renderIcon(LogOut) },
 ]);
 
 function handleProfileSelect(key) {
   if (key === "logout") router.push("/login");
-  if (key === "profile") router.push("/profile");
-  if (key === "editProfile") router.push("/edit-profile");
+  if (key === "profile") router.push("/client/myProfile");
 }
 
 const menuOptions = computed(() => [
@@ -290,33 +284,7 @@ const menuOptions = computed(() => [
       },
     ],
   },
-  {
-    label: "Member",
-    key: "member",
-    icon: renderIcon(User),
-    children: [
-      {
-        label: "Create Member",
-        key: "/createMember",
-        icon: renderIcon(User),
-      },
-      {
-        label: "View Member",
-        key: "/customers",
-        icon: renderIcon(User),
-      },
-    ],
-  },
-  {
-    label: t("menu.beverage"),
-    key: "beverage",
-    icon: renderIcon(Wine),
-    children: [
-      { label: t("menu.whisky"), key: "/whisky", icon: renderIcon(Wine) },
-      { label: t("menu.wine"), key: "/wine", icon: renderIcon(Wine) },
-    ],
-  },
-  { label: t("menu.settings"), key: "/about", icon: renderIcon(Settings) },
+  { label: t("menu.settings"), key: "/client/myProfile", icon: renderIcon(Settings) },
 ]);
 
 const activeKey = ref(route.path);

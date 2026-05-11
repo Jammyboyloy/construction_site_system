@@ -9,7 +9,7 @@ export const useTaskStore = defineStore("task", () => {
     const res = await api.get(`/supervisor/project/${project_id}/tasks`);
     // console.log(res)
     getTaskByProject.value = res.data.tasks;
-    console.log(getTaskByProject.value);
+    // console.log(getTaskByProject.value);
   };
 
   return { getTaskByProject, getTaskByProjectStore };

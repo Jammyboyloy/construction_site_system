@@ -66,6 +66,7 @@
           :project="project"
           :worker="worker"
           @updatedWorkers="workerStore.getWorkerByProjectStore(id)"
+          @updatedSupervisor="projectStore.getProjectById(id)"
         />
       </n-tab-pane>
 
@@ -147,9 +148,9 @@ watch(
 const selectedWorkers = ref([]);
 
 const openAssignModal = async () => {
-  showAssignModal.value = true;
   selectedWorkers.value = [];
   await workerStore.getAvailableWorkerStore();
+  showAssignModal.value = true;
 };
 
 const confirmAssignWorker = async () => {
@@ -158,10 +159,9 @@ const confirmAssignWorker = async () => {
   try {
     await workerStore.assignWorker(project.value.id, selectedWorkers.value);
 
-    showAssignModal.value = false;
-
-    // refresh table
     await workerStore.getWorkerByProjectStore(project.value.id);
+    showAssignModal.value = false;
+    // refresh table
   } catch (error) {
     console.log(error);
   }
