@@ -179,6 +179,7 @@ import {
   Earth,
   ChevronDown,
   Menu,
+  QrCode,
   X,
   ChevronRight,
 } from "lucide-vue-next";

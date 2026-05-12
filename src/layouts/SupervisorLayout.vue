@@ -254,11 +254,6 @@ function renderIcon(icon) {
 
 const options = computed(() => [
   { label: t("profile.userProfile"), key: "profile", icon: renderIcon(User) },
-  {
-    label: t("profile.editProfile"),
-    key: "editProfile",
-    icon: renderIcon(Pencil),
-  },
   { label: t("profile.logout"), key: "logout", icon: renderIcon(LogOut) },
 ]);
 

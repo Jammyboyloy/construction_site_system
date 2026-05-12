@@ -203,7 +203,7 @@ const expenseColumns = [
 :deep(.n-base-select-menu) {
   padding: 6px 0 !important;
   border-radius: 15px;
-  min-width: 280px !important; /* ✅ add this */
+  min-width: 280px !important; 
 }
 
 :deep(.n-base-select-menu .n-base-select-option) {
