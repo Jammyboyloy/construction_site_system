@@ -47,7 +47,7 @@
             <div class="avatar-container">
               <!-- Avatar image -->
               <n-avatar
-                :src="avatar || 'https://i.pravatar.cc/300'"
+                :src="avatar || 'http://localhost:3000/uploads/avatars/default-avatar.png'"
                 :size="150"
                 round
                 class="main-profile-avatar"
@@ -406,7 +406,7 @@
 </template>
 
 <script setup>
-import { ref, h, computed } from "vue";
+import { ref, h, computed, onMounted } from "vue";
 import BaseTitle from "@/components/BaseTitle.vue";
 import {
   NButton,
@@ -440,12 +440,19 @@ import {
 
 import { Cropper, CircleStencil } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+import api from "@/api/https";
+import { notify } from "@/utils/toast";
+import { useAuthStore } from "@/stores/auth";
+
+const auth = useAuthStore();
+const toast = notify();
+
 
 const imageSource = ref(null);
 const showCropper = ref(false);
 const cropperRef = ref(null);
 const Loading = ref(false);
-const avatar = ref(null);
+const avatar = ref(localStorage.getItem("avatar"));
 
 const showDeleteAvatarModal = ref(false);
 const showLogoutModal = ref(false);
@@ -456,9 +463,15 @@ const pwLoading = ref(false);
 const passwordForm = ref({ current: "", new: "" });
 
 const MyProfileStore = ref({
-  name: "John Doe",
-  email: "john@gmail.com",
-  created_at: "2026-05-11T02:24:52.000Z",
+  name: "",
+  email: "",
+  created_at: "",
+});
+
+onMounted(async () => {
+  await auth.loadMe();
+
+  MyProfileStore.value = auth.user;
 });
 
 const avatarDropdownOptions = computed(() => [
@@ -483,25 +496,96 @@ function handleAvatarDropdown(key) {
   }
 }
 
-const handleFile = (event) => {
+const handleFile = async (event) => {
   const file = event.target.files[0];
+
   if (!file) return;
-  if (imageSource.value) URL.revokeObjectURL(imageSource.value);
+
+  // remove old preview
+  if (imageSource.value) {
+    URL.revokeObjectURL(imageSource.value);
+  }
+
+  // preview for cropper
   imageSource.value = URL.createObjectURL(file);
+
+  // open crop modal
   showCropper.value = true;
+
+  // reset input
   event.target.value = "";
+  console.log(imageSource.value);
 };
 
-function cropImage() {
+const cropImage = async () => {
   const { canvas } = cropperRef.value.getResult();
-  if (!canvas) return;
-  avatar.value = canvas.toDataURL("image/png");
-  showCropper.value = false;
-}
 
-function confirmDeleteAvatar() {
-  avatar.value = null;
-  showDeleteAvatarModal.value = false;
+  if (!canvas) return;
+
+  canvas.toBlob(async (blob) => {
+    try {
+      if (!blob) return;
+
+      const formData = new FormData();
+
+      formData.append("avatar", blob, "avatar.png");
+
+      const response = await api.put(
+        "/user/avatar",
+        formData
+      );
+
+      console.log("API RESPONSE:", response.data);
+
+      // check correct key here
+      avatar.value =
+        response.data.avatar ||
+        response.data.avatar_url;
+      localStorage.setItem("avatar",avatar.value);
+      console.log("AVATAR:", avatar.value);
+
+      toast.success("Avatar updated!");
+
+      showCropper.value = false;
+
+    } catch (error) {
+      console.log(error);
+    }
+  }, "image/png");
+};
+
+async function confirmDeleteAvatar() {
+  try {
+    // loading.value = true;
+
+    const response = await api.put(
+      "/user/avatar/reset"
+    );
+
+    console.log(response.data);
+
+    // reset frontend
+    avatar.value = null;
+
+    // remove local storage
+    localStorage.removeItem("avatar");
+
+    toast.success("Avatar removed!");
+
+    showDeleteAvatarModal.value = false;
+
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to remove avatar"
+    );
+
+  }
+  // finally {
+  //   loading.value = false;
+  // }
 }
 
 async function confirmLogout() {
@@ -516,9 +600,43 @@ function closePasswordModal() {
 }
 
 async function submitPassword() {
-  pwLoading.value = true;
-  pwLoading.value = false;
-  closePasswordModal();
+  try {
+    // validation
+    if (!passwordForm.value.current || !passwordForm.value.new) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    pwLoading.value = true;
+
+    const response = await api.post(
+      "/user/change-password",
+      {
+        current_password:
+          passwordForm.value.current,
+
+        new_password:
+          passwordForm.value.new,
+      }
+    );
+
+    console.log(response.data);
+
+    toast.success("Password changed successfully!");
+
+    closePasswordModal();
+
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to change password"
+    );
+
+  } finally {
+    pwLoading.value = false;
+  }
 }
 
 function formatDate(dateString) {

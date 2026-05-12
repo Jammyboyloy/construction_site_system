@@ -4,7 +4,7 @@
 
       <!-- Title -->
       <div class="text-center mb-4">
-        <h2 class="fw-bold">Forgot Password</h2>
+        <h2 class="fw-bold mb-4 text-center">Forgot Password</h2>
         <p class="text-muted">
           Enter your email address to reset your password
         </p>

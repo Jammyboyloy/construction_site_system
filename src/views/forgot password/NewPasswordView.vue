@@ -3,7 +3,7 @@
     <div class="card shadow-lg border-0 rounded-4 p-4 reset-card">
 
       <div class="text-center mb-4">
-        <h2 class="fw-bold">Create New Password</h2>
+        <h2 class="fw-bold mb-4 text-center">Create New Password</h2>
       </div>
 
       <!-- Email (readonly or hidden if you want) -->
